@@ -1,5 +1,6 @@
-package com.api.getcep.controllers
+package com.api.getcep.integrationTest.controllers
 
+import com.api.getcep.controllers.GetAllLocationsController
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.services.GetAllLocationsService
 import com.fasterxml.jackson.databind.ObjectMapper

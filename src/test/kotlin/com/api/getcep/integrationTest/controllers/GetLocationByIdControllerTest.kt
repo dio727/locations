@@ -1,5 +1,6 @@
-package com.api.getcep.controllers
+package com.api.getcep.integrationTest.controllers
 
+import com.api.getcep.controllers.GetLocationByIdController
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.exceptions.LocationNotFoundException
 import com.api.getcep.mappers.toLocationResponse

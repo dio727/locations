@@ -1,5 +1,6 @@
-package com.api.getcep.controllers
+package com.api.getcep.integrationTest.controllers
 
+import com.api.getcep.controllers.SaveLocationByApiCepController
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.exceptions.CepAlreadyExistsException
 import com.api.getcep.exceptions.CepNotFoundException

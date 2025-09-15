@@ -1,5 +1,6 @@
-package com.api.getcep.controllers
+package com.api.getcep.integrationTest.controllers
 
+import com.api.getcep.controllers.DeleteLocationController
 import com.api.getcep.exceptions.LocationNotFoundException
 import com.api.getcep.services.DeleteLocationService
 import io.mockk.every

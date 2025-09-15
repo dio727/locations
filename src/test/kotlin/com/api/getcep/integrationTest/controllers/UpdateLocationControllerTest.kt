@@ -1,5 +1,6 @@
-package com.api.getcep.controllers
+package com.api.getcep.integrationTest.controllers
 
+import com.api.getcep.controllers.UpdateLocationController
 import com.api.getcep.controllers.request.UpdateLocationRequest
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.dtos.UpdateLocationDTO
