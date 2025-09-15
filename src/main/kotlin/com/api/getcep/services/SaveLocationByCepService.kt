@@ -20,11 +20,9 @@ class SaveLocationByCepService(
         }
 
         val apiCepLocationDTO = fetchLocationService.fetchByCep(cep)
-
-
         val locationEntity = apiCepLocationDTO.toLocationEntity()
+        val savedEntity = locationRepository.save(locationEntity)
 
-        locationRepository.save(locationEntity)
-        return locationEntity.toLocationDTO()
+        return savedEntity.toLocationDTO()
     }
 }

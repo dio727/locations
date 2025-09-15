@@ -9,7 +9,7 @@ import com.api.getcep.dtos.UpdateLocationDTO
 
 fun LocationEntity.toLocationDTO(): LocationDTO =
     LocationDTO(
-        idLocation = this.idLocation ?: 0,
+        idLocation = this.idLocation,
         cep = this.cep,
         logradouro = this.logradouro,
         complemento = this.complemento,
