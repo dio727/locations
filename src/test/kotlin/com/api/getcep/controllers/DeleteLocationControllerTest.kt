@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 class DeleteLocationControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
     private val deleteLocationService: DeleteLocationService,
-    private val objectMapper: ObjectMapper
 ) {
     @TestConfiguration
     class ControllerTestConfig {
