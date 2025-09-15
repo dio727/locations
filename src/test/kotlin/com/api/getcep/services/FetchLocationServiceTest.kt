@@ -2,10 +2,16 @@ package com.api.getcep.services
 
 import com.api.getcep.client.GetLocationClient
 import com.api.getcep.client.response.ApiCepLocationResponse
+import com.api.getcep.exceptions.CepNotFoundException
+import com.api.getcep.exceptions.InvalidCepFormatException
 import com.api.getcep.mappers.toLocationDTO
+import feign.FeignException
+import feign.Request
 import kotlin.test.Test
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.jupiter.api.assertThrows
+import java.nio.charset.Charset
 import kotlin.test.assertEquals
 
 private val getLocationClient: GetLocationClient = mockk()
@@ -37,5 +43,29 @@ class FetchLocationServiceTest {
         val result = fetchLocationService.fetchByCep(cep)
 
         assertEquals(expectedDTO, result)
+    }
+
+    @Test
+    fun shouldThrowInvalidCepFormatExceptionWhenCepIsInvalid() {
+        val cep = "cep-invalido"
+
+        every { getLocationClient.getLocationByCep(cep) } throws FeignException.BadRequest("Bad Request", Request.create(
+            Request.HttpMethod.GET, "/", mapOf(), null, Charset.defaultCharset(), null), null, mapOf())
+
+        assertThrows<InvalidCepFormatException> {
+            fetchLocationService.fetchByCep(cep)
+        }
+    }
+
+    @Test
+    fun shouldThrowCepNotFoundExceptionWhenCepIsNotFound() {
+        val cep = "99999-999"
+
+        every { getLocationClient.getLocationByCep(cep) } throws FeignException.NotFound("Not Found", Request.create(
+            Request.HttpMethod.GET, "/", mapOf(), null, Charset.defaultCharset(), null), null, mapOf())
+
+        assertThrows<CepNotFoundException> {
+            fetchLocationService.fetchByCep(cep)
+        }
     }
 }
