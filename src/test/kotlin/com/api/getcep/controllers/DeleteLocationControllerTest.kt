@@ -2,7 +2,6 @@ package com.api.getcep.controllers
 
 import com.api.getcep.exceptions.LocationNotFoundException
 import com.api.getcep.services.DeleteLocationService
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
