@@ -1,7 +1,7 @@
-package com.api.getcep.domain.location
+package com.api.getcep.unitTests.domain.location
 
 import com.api.getcep.domain.location.entities.LocationEntity
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class LocationEntityTest {
@@ -27,20 +27,20 @@ class LocationEntityTest {
     fun shouldCreateLocationEntityWithCorrectFields() {
         val location = createCompleteLocationEntity(1L)
 
-        assertEquals(1L, location.idLocation)
-        assertEquals("01001-000", location.cep)
-        assertEquals("Praça da Sé", location.logradouro)
-        assertEquals("lado ímpar", location.complemento)
-        assertNull(location.unidade)
-        assertEquals("Sé", location.bairro)
-        assertEquals("São Paulo", location.localidade)
-        assertEquals("SP", location.uf)
-        assertEquals("São Paulo", location.estado)
-        assertEquals("Sudeste", location.regiao)
-        assertEquals("3550308", location.ibge)
-        assertEquals("1004", location.gia)
-        assertEquals("11", location.ddd)
-        assertEquals("7107", location.siafi)
+        Assertions.assertEquals(1L, location.idLocation)
+        Assertions.assertEquals("01001-000", location.cep)
+        Assertions.assertEquals("Praça da Sé", location.logradouro)
+        Assertions.assertEquals("lado ímpar", location.complemento)
+        Assertions.assertNull(location.unidade)
+        Assertions.assertEquals("Sé", location.bairro)
+        Assertions.assertEquals("São Paulo", location.localidade)
+        Assertions.assertEquals("SP", location.uf)
+        Assertions.assertEquals("São Paulo", location.estado)
+        Assertions.assertEquals("Sudeste", location.regiao)
+        Assertions.assertEquals("3550308", location.ibge)
+        Assertions.assertEquals("1004", location.gia)
+        Assertions.assertEquals("11", location.ddd)
+        Assertions.assertEquals("7107", location.siafi)
     }
 
     @Test
@@ -56,14 +56,14 @@ class LocationEntityTest {
         location.gia = "7890"
         location.siafi = "4321"
 
-        assertEquals("Rua Teste", location.logradouro)
-        assertEquals("Apto 101", location.complemento)
-        assertEquals("Teste Unidade", location.unidade)
-        assertEquals("Novo Bairro", location.bairro)
-        assertEquals("Nova Localidade", location.localidade)
-        assertEquals("1234567", location.ibge)
-        assertEquals("7890", location.gia)
-        assertEquals("4321", location.siafi)
+        Assertions.assertEquals("Rua Teste", location.logradouro)
+        Assertions.assertEquals("Apto 101", location.complemento)
+        Assertions.assertEquals("Teste Unidade", location.unidade)
+        Assertions.assertEquals("Novo Bairro", location.bairro)
+        Assertions.assertEquals("Nova Localidade", location.localidade)
+        Assertions.assertEquals("1234567", location.ibge)
+        Assertions.assertEquals("7890", location.gia)
+        Assertions.assertEquals("4321", location.siafi)
     }
 
     @Test
@@ -72,8 +72,8 @@ class LocationEntityTest {
         val location2 = createCompleteLocationEntity(1L)
         val location3 = createCompleteLocationEntity(2L)
 
-        assertEquals(location1, location2)
-        assertNotEquals(location1, location3)
+        Assertions.assertEquals(location1, location2)
+        Assertions.assertNotEquals(location1, location3)
     }
 
     @Test
@@ -81,7 +81,7 @@ class LocationEntityTest {
         val location1 = createCompleteLocationEntity(1L)
         val location2 = createCompleteLocationEntity(1L)
 
-        assertEquals(location1.hashCode(), location2.hashCode())
+        Assertions.assertEquals(location1.hashCode(), location2.hashCode())
     }
 
     @Test
@@ -89,8 +89,8 @@ class LocationEntityTest {
         val original = createCompleteLocationEntity(1L)
         val copy = original.copy()
 
-        assertEquals(original, copy)
-        assertNotSame(original, copy)
+        Assertions.assertEquals(original, copy)
+        Assertions.assertNotSame(original, copy)
     }
 
     @Test
@@ -110,26 +110,26 @@ class LocationEntityTest {
             ddd = "11",
             siafi = "7107"
         )
-        assertNull(location.idLocation)
-        assertEquals("01001-000", location.cep)
-        assertEquals("Praça da Sé", location.logradouro)
-        assertEquals("lado ímpar", location.complemento)
-        assertNull(location.unidade)
-        assertEquals("Sé", location.bairro)
-        assertEquals("São Paulo", location.localidade)
-        assertEquals("SP", location.uf)
-        assertEquals("São Paulo", location.estado)
-        assertEquals("Sudeste", location.regiao)
-        assertEquals("3550308", location.ibge)
-        assertEquals("1004", location.gia)
-        assertEquals("11", location.ddd)
-        assertEquals("7107", location.siafi)
+        Assertions.assertNull(location.idLocation)
+        Assertions.assertEquals("01001-000", location.cep)
+        Assertions.assertEquals("Praça da Sé", location.logradouro)
+        Assertions.assertEquals("lado ímpar", location.complemento)
+        Assertions.assertNull(location.unidade)
+        Assertions.assertEquals("Sé", location.bairro)
+        Assertions.assertEquals("São Paulo", location.localidade)
+        Assertions.assertEquals("SP", location.uf)
+        Assertions.assertEquals("São Paulo", location.estado)
+        Assertions.assertEquals("Sudeste", location.regiao)
+        Assertions.assertEquals("3550308", location.ibge)
+        Assertions.assertEquals("1004", location.gia)
+        Assertions.assertEquals("11", location.ddd)
+        Assertions.assertEquals("7107", location.siafi)
     }
 
     @Test
     fun shouldReturnCorrectStringRepresentation() {
         val location = createCompleteLocationEntity(1L)
         val expectedString = "LocationEntity(idLocation=1, cep=01001-000, logradouro=Praça da Sé, complemento=lado ímpar, unidade=null, bairro=Sé, localidade=São Paulo, uf=SP, estado=São Paulo, regiao=Sudeste, ibge=3550308, gia=1004, ddd=11, siafi=7107)"
-        assertEquals(expectedString, location.toString())
+        Assertions.assertEquals(expectedString, location.toString())
     }
 }

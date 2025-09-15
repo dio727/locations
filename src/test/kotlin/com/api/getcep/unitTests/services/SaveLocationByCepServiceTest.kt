@@ -1,4 +1,4 @@
-package com.api.getcep.services
+package com.api.getcep.unitTests.services
 
 import com.api.getcep.domain.location.entities.LocationEntity
 import com.api.getcep.domain.location.repositories.LocationRepository
@@ -6,6 +6,7 @@ import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.exceptions.CepAlreadyExistsException
 import com.api.getcep.mappers.toLocationDTO
 import com.api.getcep.mappers.toLocationEntity
+import com.api.getcep.services.SaveLocationByCepService
 import kotlin.test.Test
 import io.mockk.every
 import io.mockk.mockk
@@ -15,7 +16,7 @@ import kotlin.test.assertEquals
 
 class SaveLocationByCepServiceTest {
     private val locationRepository: LocationRepository = mockk()
-    private val fetchLocationService: FetchLocationService = mockk()
+    private val fetchLocationService: com.api.getcep.services.FetchLocationService = mockk()
     private val saveLocationByCepService = SaveLocationByCepService(locationRepository, fetchLocationService)
 
     @Test

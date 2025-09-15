@@ -1,10 +1,11 @@
-package com.api.getcep.services
+package com.api.getcep.unitTests.services
 
-import com.api.getcep.client.GetLocationClient
-import com.api.getcep.client.response.ApiCepLocationResponse
+import com.api.getcep.integrations.client.GetLocationClient
+import com.api.getcep.integrations.client.response.ApiCepLocationResponse
 import com.api.getcep.exceptions.CepNotFoundException
 import com.api.getcep.exceptions.InvalidCepFormatException
 import com.api.getcep.mappers.toLocationDTO
+import com.api.getcep.services.FetchLocationService
 import feign.FeignException
 import feign.Request
 import kotlin.test.Test

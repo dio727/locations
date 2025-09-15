@@ -1,4 +1,4 @@
-package com.api.getcep.client.response
+package com.api.getcep.integrations.client.response
 
 data class ApiCepLocationResponse(
     val cep: String,

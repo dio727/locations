@@ -1,6 +1,6 @@
 package com.api.getcep.services
 
-import com.api.getcep.client.GetLocationClient
+import com.api.getcep.integrations.client.GetLocationClient
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.exceptions.CepNotFoundException
 import com.api.getcep.exceptions.InvalidCepFormatException

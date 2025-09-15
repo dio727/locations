@@ -1,9 +1,10 @@
-package com.api.getcep.services
+package com.api.getcep.unitTests.services
 
 import com.api.getcep.domain.location.entities.LocationEntity
 import com.api.getcep.domain.location.repositories.LocationRepository
 import com.api.getcep.exceptions.LocationNotFoundException
 import com.api.getcep.mappers.toLocationDTO
+import com.api.getcep.services.GetLocationByIdService
 import kotlin.test.Test
 import io.mockk.every
 import io.mockk.mockk

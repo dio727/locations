@@ -5,7 +5,7 @@ import org.springframework.boot.runApplication
 import org.springframework.cloud.openfeign.EnableFeignClients
 
 @SpringBootApplication
-@EnableFeignClients(basePackages = ["com.api.getcep.client"])
+@EnableFeignClients(basePackages = ["com.api.getcep.integrations.client"])
 class Application
 
 fun main(args: Array<String>) {

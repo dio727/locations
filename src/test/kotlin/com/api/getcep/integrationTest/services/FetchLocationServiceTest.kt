@@ -1,7 +1,7 @@
 package com.api.getcep.integrationTest.services
 
-import com.api.getcep.client.GetLocationClient
-import com.api.getcep.client.response.ApiCepLocationResponse
+import com.api.getcep.integrations.client.GetLocationClient
+import com.api.getcep.integrations.client.response.ApiCepLocationResponse
 import com.api.getcep.exceptions.CepNotFoundException
 import com.api.getcep.exceptions.InvalidCepFormatException
 import com.api.getcep.services.FetchLocationService
@@ -21,7 +21,7 @@ import java.nio.charset.Charset
 
 @SpringBootTest
 @ExtendWith(MockKExtension::class)
-class FetchLocationServiceIntegrationTest {
+class FetchLocationServiceTest {
 
     @Autowired
     lateinit var fetchLocationService: FetchLocationService

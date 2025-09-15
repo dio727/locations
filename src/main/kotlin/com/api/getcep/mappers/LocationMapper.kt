@@ -1,6 +1,6 @@
 package com.api.getcep.mappers
 
-import com.api.getcep.client.response.ApiCepLocationResponse
+import com.api.getcep.integrations.client.response.ApiCepLocationResponse
 import com.api.getcep.controllers.response.LocationResponse
 import com.api.getcep.controllers.request.UpdateLocationRequest
 import com.api.getcep.domain.location.entities.LocationEntity
