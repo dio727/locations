@@ -1,4 +1,4 @@
-package com.api.getcep.domain.location
+package com.api.getcep.domain.location.entities
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

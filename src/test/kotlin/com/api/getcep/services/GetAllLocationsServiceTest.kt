@@ -1,7 +1,7 @@
 package com.api.getcep.services
 
-import com.api.getcep.domain.location.LocationEntity
-import com.api.getcep.domain.location.LocationRepository
+import com.api.getcep.domain.location.entities.LocationEntity
+import com.api.getcep.domain.location.repositories.LocationRepository
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.mappers.toLocationDTO
 import kotlin.test.Test

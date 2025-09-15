@@ -1,7 +1,7 @@
 package com.api.getcep.integrationTest.services
 
-import com.api.getcep.domain.location.LocationEntity
-import com.api.getcep.domain.location.LocationRepository
+import com.api.getcep.domain.location.entities.LocationEntity
+import com.api.getcep.domain.location.repositories.LocationRepository
 import com.api.getcep.exceptions.LocationNotFoundException
 import com.api.getcep.services.GetLocationByIdService
 import org.junit.jupiter.api.Assertions.assertEquals

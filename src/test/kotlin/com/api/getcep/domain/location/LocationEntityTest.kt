@@ -1,5 +1,6 @@
 package com.api.getcep.domain.location
 
+import com.api.getcep.domain.location.entities.LocationEntity
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
