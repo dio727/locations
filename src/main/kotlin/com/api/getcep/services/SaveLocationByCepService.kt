@@ -11,17 +11,16 @@ import org.springframework.stereotype.Service
 @Service
 class SaveLocationByCepService(
     private val locationRepository: LocationRepository,
-    private val fetchLocationService: FetchLocationService
+    private val fetchLocationService: FetchLocationService,
+    private val getLocationByCepService: GetLocationByCepService
 ) {
     fun saveLocationByCep(cep: String): LocationDTO {
 
-        locationRepository.findByCep(cep)?.let {
-            throw CepAlreadyExistsException(cep)
-        }
+        getLocationByCepService.checkCepExists(cep)
 
-        val apiCepLocationDTO = fetchLocationService.fetchByCep(cep)
-        val locationEntity = apiCepLocationDTO.toLocationEntity()
-        val savedEntity = locationRepository.save(locationEntity)
+        val apiCepLocationEntity = fetchLocationService.fetchByCep(cep).toLocationEntity()
+
+        val savedEntity = locationRepository.save(apiCepLocationEntity)
 
         return savedEntity.toLocationDTO()
     }

@@ -2,9 +2,11 @@ package com.api.getcep.unitTests.services
 
 import com.api.getcep.domain.location.entities.LocationEntity
 import com.api.getcep.domain.location.repositories.LocationRepository
+import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.dtos.UpdateLocationDTO
 import com.api.getcep.exceptions.LocationNotFoundException
 import com.api.getcep.mappers.toLocationDTO
+import com.api.getcep.services.GetLocationByIdService
 import com.api.getcep.services.UpdateLocationService
 import kotlin.test.Test
 import io.mockk.every
@@ -17,12 +19,16 @@ import kotlin.test.assertEquals
 class UpdateLocationServiceTest {
 
     private val locationRepository: LocationRepository = mockk()
-    private val updateLocationService = UpdateLocationService(locationRepository)
+    private val getLocationByIdService: GetLocationByIdService = mockk()
+    private val updateLocationService = UpdateLocationService(
+        locationRepository,
+        getLocationByIdService
+    )
 
     @Test
     fun shouldUpdateLocationSuccessfullyWhenFound() {
         val idLocation = 1L
-        val existingLocation = LocationEntity(
+        val locationDTO = LocationDTO(
             idLocation = idLocation,
             cep = "01001-000",
             logradouro = "Rua Antiga",
@@ -49,28 +55,26 @@ class UpdateLocationServiceTest {
             gia = "98765",
             siafi = "09876"
         )
-        val updatedLocation = existingLocation.copy(
-            logradouro = "Rua Nova",
-            complemento = "Comp. Novo",
-            unidade = "Unidade Nova",
-            bairro = "Bairro Novo",
-            localidade = "Cidade Nova",
-            ibge = "54321",
-            gia = "98765",
-            siafi = "09876"
-        )
 
-        every { locationRepository.findById(idLocation) } returns Optional.of(existingLocation)
-        every { locationRepository.save(updatedLocation) } returns updatedLocation
+        every { getLocationByIdService.getLocationById(idLocation) } returns locationDTO
+        every { locationRepository.save(any()) } answers { firstArg<LocationEntity>() }
 
         val result = updateLocationService.updateLocation(idLocation, updateDTO)
 
-        val expectedDTO = updatedLocation.toLocationDTO()
+        val expectedDTO = locationDTO.copy(
+            logradouro = updateDTO.logradouro,
+            complemento = updateDTO.complemento,
+            unidade = updateDTO.unidade,
+            bairro = updateDTO.bairro,
+            localidade = updateDTO.localidade,
+            ibge = updateDTO.ibge,
+            gia = updateDTO.gia,
+            siafi = updateDTO.siafi
+        )
 
-        verify(exactly = 1) { locationRepository.save(updatedLocation) }
+        verify(exactly = 1) { locationRepository.save(any()) }
         assertEquals(expectedDTO, result)
     }
-
 
     @Test
     fun shouldThrowLocationNotFoundExceptionWhenLocationNotFound() {
@@ -87,7 +91,7 @@ class UpdateLocationServiceTest {
             siafi = "09876"
         )
 
-        every { locationRepository.findById(idLocation) } returns Optional.empty()
+        every { getLocationByIdService.getLocationById(idLocation) } throws LocationNotFoundException(idLocation)
 
         assertThrows(LocationNotFoundException::class.java) {
             updateLocationService.updateLocation(idLocation, updateDTO)

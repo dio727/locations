@@ -5,13 +5,14 @@ import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.dtos.UpdateLocationDTO
 import com.api.getcep.exceptions.LocationNotFoundException
 import com.api.getcep.mappers.toLocationDTO
+import com.api.getcep.mappers.toLocationEntity
 import org.springframework.stereotype.Service
 
 @Service
-class UpdateLocationService(private val locationRepository: LocationRepository) {
+class UpdateLocationService(private val locationRepository: LocationRepository, private val getLocationByIdService: GetLocationByIdService) {
     fun updateLocation(idLocation: Long, updateDTO: UpdateLocationDTO): LocationDTO {
-        val location = locationRepository.findById(idLocation)
-            .orElseThrow { LocationNotFoundException(idLocation) }
+
+        val location = getLocationByIdService.getLocationById(idLocation).toLocationEntity()
 
         location.logradouro = updateDTO.logradouro
         location.complemento = updateDTO.complemento

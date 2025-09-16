@@ -1,10 +1,11 @@
 package com.api.getcep.unitTests.services
 
-import com.api.getcep.domain.location.entities.LocationEntity
 import com.api.getcep.domain.location.repositories.LocationRepository
+import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.exceptions.LocationNotFoundException
+import com.api.getcep.mappers.toLocationEntity
 import com.api.getcep.services.DeleteLocationService
-import java.util.Optional
+import com.api.getcep.services.GetLocationByIdService
 import kotlin.test.Test
 import io.mockk.every
 import io.mockk.justRun
@@ -14,11 +15,15 @@ import org.junit.jupiter.api.Assertions.assertThrows
 
 class DeleteLocationServiceTest {
     private val locationRepository: LocationRepository = mockk()
-    private val deleteLocationService = DeleteLocationService(locationRepository)
+    private val getLocationByIdService: GetLocationByIdService = mockk()
+    private val deleteLocationService = DeleteLocationService(
+        locationRepository,
+        getLocationByIdService
+    )
 
     @Test
     fun shouldDeleteLocationWhenFound() {
-        val location = LocationEntity(
+        val locationDTO = LocationDTO(
             idLocation = 1L,
             cep = "01001-000",
             logradouro = "Rua Teste",
@@ -35,17 +40,17 @@ class DeleteLocationServiceTest {
             siafi = "7107"
         )
 
-        every { locationRepository.findById(1L) } returns Optional.of(location)
-        justRun { locationRepository.delete(location) }
+        every { getLocationByIdService.getLocationById(1L) } returns locationDTO
+        justRun { locationRepository.delete(any()) }
 
         deleteLocationService.deleteLocation(1L)
 
-        verify(exactly = 1) { locationRepository.delete(location) }
+        verify(exactly = 1) { locationRepository.delete(locationDTO.toLocationEntity()) }
     }
 
     @Test
     fun shouldThrowLocationNotFoundExceptionWhenLocationNotFound() {
-        every { locationRepository.findById(99L) } returns Optional.empty()
+        every { getLocationByIdService.getLocationById(99L) } throws LocationNotFoundException(99L)
 
         assertThrows(LocationNotFoundException::class.java) {
             deleteLocationService.deleteLocation(99L)
