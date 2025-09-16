@@ -12,18 +12,21 @@ import org.springframework.stereotype.Service
 class UpdateLocationService(private val locationRepository: LocationRepository, private val getLocationByIdService: GetLocationByIdService) {
     fun updateLocation(idLocation: Long, updateDTO: UpdateLocationDTO): LocationDTO {
 
-        val location = getLocationByIdService.getLocationById(idLocation).toLocationEntity()
+        val location = getLocationByIdService.getLocationById(idLocation)
 
-        location.logradouro = updateDTO.logradouro
-        location.complemento = updateDTO.complemento
-        location.unidade = updateDTO.unidade
-        location.bairro = updateDTO.bairro
-        location.localidade = updateDTO.localidade
-        location.ibge = updateDTO.ibge
-        location.gia = updateDTO.gia
-        location.siafi = updateDTO.siafi
+        location.apply {
+            this.bairro = updateDTO.bairro
+            this.logradouro = updateDTO.logradouro
+            this.complemento = updateDTO.complemento
+            this.unidade = updateDTO.unidade
+            this.bairro = updateDTO.bairro
+            this.localidade = updateDTO.localidade
+            this.ibge = updateDTO.ibge
+            this.gia = updateDTO.gia
+            this.siafi = updateDTO.siafi
+        }
 
-        val updated = locationRepository.save(location)
+        val updated = locationRepository.save(location.toLocationEntity())
         return updated.toLocationDTO()
     }
 }

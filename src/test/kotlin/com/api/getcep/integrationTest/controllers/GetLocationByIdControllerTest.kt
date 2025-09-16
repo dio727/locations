@@ -1,62 +1,53 @@
 package com.api.getcep.integrationTest.controllers
 
-import com.api.getcep.controllers.GetLocationByIdController
+import com.api.getcep.domain.location.entities.LocationEntity
 import com.api.getcep.dtos.LocationDTO
-import com.api.getcep.exceptions.LocationNotFoundException
 import com.api.getcep.mappers.toLocationResponse
-import com.api.getcep.services.GetLocationByIdService
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
+import com.api.getcep.Application
+import com.api.getcep.domain.location.repositories.LocationRepository
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(GetLocationByIdController::class)
+@AutoConfigureMockMvc
+@SpringBootTest(classes = [Application::class])
+@ActiveProfiles("test")
 class GetLocationByIdControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
-    private val getLocationByIdService: GetLocationByIdService,
+    private val locationRepository: LocationRepository,
     private val objectMapper: ObjectMapper
 ) {
-    @TestConfiguration
-    class ControllerTestConfig {
-        @Bean
-        fun getLocationByIdService() = mockk<GetLocationByIdService>()
+
+    @BeforeEach
+    fun setup() {
+        locationRepository.deleteAll()
     }
 
     @Test
     fun shouldReturn200AndLocationWhenIdExists() {
-        val idLocation = 1L
-        val locationDTO = LocationDTO(
-            idLocation = idLocation,
-            cep = "01001-000",
-            logradouro = "Praça da Sé",
-            complemento = "lado ímpar",
-            unidade = null,
-            bairro = "Sé",
-            localidade = "São Paulo",
-            uf = "SP",
-            estado = "São Paulo",
-            regiao = "Sudeste",
-            ibge = "3550308",
-            gia = "1004",
-            ddd = "11",
-            siafi = "7107"
+        val savedLocation = locationRepository.save(
+            createLocation(
+                cep = "01001-000",
+                logradouro = "Praça da Sé",
+                bairro = "Sé",
+                localidade = "São Paulo",
+                uf = "SP"
+            )
         )
-        val locationResponse = locationDTO.toLocationResponse()
-        val expectedJson = objectMapper.writeValueAsString(locationResponse)
 
-        every { getLocationByIdService.getLocationById(idLocation) } returns locationDTO
+        val expectedJson = objectMapper.writeValueAsString(savedLocation.toDTO().toLocationResponse())
 
         mockMvc.perform(
-            get("/locations/{idLocation}", idLocation)
+            get("/locations/{idLocation}", savedLocation.idLocation!!)
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isOk)
@@ -66,15 +57,50 @@ class GetLocationByIdControllerTest @Autowired constructor(
 
     @Test
     fun shouldReturn404WhenIdDoesNotExist() {
-
-        val idLocation = 999L
-
-        every { getLocationByIdService.getLocationById(idLocation) } throws LocationNotFoundException(idLocation)
+        val nonExistentId = 999L
 
         mockMvc.perform(
-            get("/locations/{idLocation}", idLocation)
+            get("/locations/{idLocation}", nonExistentId)
                 .contentType(MediaType.APPLICATION_JSON)
         )
             .andExpect(status().isNotFound)
+    }
+
+    private fun createLocation(cep: String, logradouro: String, bairro: String, localidade: String, uf: String): LocationEntity {
+        return LocationEntity(
+            idLocation = null,
+            cep = cep,
+            logradouro = logradouro,
+            complemento = null,
+            unidade = null,
+            bairro = bairro,
+            localidade = localidade,
+            uf = uf,
+            estado = localidade,
+            regiao = "Sudeste",
+            ibge = "0000000",
+            gia = null,
+            ddd = "00",
+            siafi = "0000"
+        )
+    }
+
+    private fun LocationEntity.toDTO(): LocationDTO {
+        return LocationDTO(
+            idLocation = this.idLocation,
+            cep = this.cep,
+            logradouro = this.logradouro,
+            complemento = this.complemento,
+            unidade = this.unidade,
+            bairro = this.bairro,
+            localidade = this.localidade,
+            uf = this.uf,
+            estado = this.estado,
+            regiao = this.regiao,
+            ibge = this.ibge,
+            gia = this.gia,
+            ddd = this.ddd,
+            siafi = this.siafi
+        )
     }
 }

@@ -3,16 +3,16 @@ package com.api.getcep.dtos
 data class LocationDTO(
     val idLocation: Long?,
     val cep: String,
-    val logradouro: String?,
-    val complemento: String?,
-    val unidade: String?,
-    val bairro: String?,
-    val localidade: String,
+    var logradouro: String?,
+    var complemento: String?,
+    var unidade: String?,
+    var bairro: String?,
+    var localidade: String,
     val uf: String,
     val estado: String?,
     val regiao: String?,
-    val ibge: String?,
-    val gia: String?,
+    var ibge: String?,
+    var gia: String?,
     val ddd: String?,
-    val siafi: String?
+    var siafi: String?
 )
