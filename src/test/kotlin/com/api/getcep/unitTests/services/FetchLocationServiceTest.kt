@@ -35,7 +35,8 @@ class FetchLocationServiceTest {
             ibge = "3550308",
             gia = "1004",
             ddd = "11",
-            siafi = "7107"
+            siafi = "7107",
+            erro = null
         )
         val expectedDTO = apiResponse.toLocationDTO()
 
@@ -62,8 +63,11 @@ class FetchLocationServiceTest {
     fun shouldThrowCepNotFoundExceptionWhenCepIsNotFound() {
         val cep = "99999-999"
 
-        every { getLocationClient.getLocationByCep(cep) } throws FeignException.NotFound("Not Found", Request.create(
-            Request.HttpMethod.GET, "/", mapOf(), null, Charset.defaultCharset(), null), null, mapOf())
+        every { getLocationClient.getLocationByCep(cep) } returns ApiCepLocationResponse(
+            cep = "", logradouro = null, complemento = null, bairro = null,
+            localidade = null, uf = null, ibge = null, gia = null, ddd = null,
+            siafi = null, regiao = null, estado = null, unidade = null, erro = true
+        )
 
         assertThrows<CepNotFoundException> {
             fetchLocationService.fetchByCep(cep)

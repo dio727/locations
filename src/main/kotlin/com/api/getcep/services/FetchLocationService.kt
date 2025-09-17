@@ -12,11 +12,14 @@ class FetchLocationService(private val getLocationClient: GetLocationClient) {
     fun fetchByCep(cep: String): LocationDTO {
         try {
             val response = getLocationClient.getLocationByCep(cep)
+
+            if (response.erro == true) {
+                throw CepNotFoundException(cep)
+            }
+
             return response.toLocationDTO()
         } catch (e: feign.FeignException.BadRequest) {
             throw InvalidCepFormatException(cep)
-        } catch (e: feign.FeignException.NotFound) {
-            throw CepNotFoundException(cep)
         }
     }
 }

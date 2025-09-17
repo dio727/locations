@@ -1,43 +1,122 @@
 package com.api.getcep.integrationTest.controllers
 
-import com.api.getcep.controllers.SaveLocationByApiCepController
+import com.api.getcep.domain.location.entities.LocationEntity
 import com.api.getcep.dtos.LocationDTO
-import com.api.getcep.exceptions.CepAlreadyExistsException
-import com.api.getcep.exceptions.CepNotFoundException
-import com.api.getcep.exceptions.InvalidCepFormatException
 import com.api.getcep.mappers.toLocationResponse
-import com.api.getcep.services.SaveLocationByCepService
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
+import com.api.getcep.Application
+import com.api.getcep.domain.location.repositories.LocationRepository
+import com.github.tomakehurst.wiremock.client.WireMock
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.http.MediaType
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
-@WebMvcTest(SaveLocationByApiCepController::class)
+@AutoConfigureWireMock(port = 0)
+@AutoConfigureMockMvc
+@SpringBootTest(classes = [Application::class])
+@ActiveProfiles("test")
 class SaveLocationByApiCepControllerTest @Autowired constructor(
     private val mockMvc: MockMvc,
-    private val saveLocationByCepService: SaveLocationByCepService,
+    private val locationRepository: LocationRepository,
     private val objectMapper: ObjectMapper
 ) {
 
-    @TestConfiguration
-    class ControllerTestConfig {
-        @Bean
-        fun saveLocationByCepService() = mockk<SaveLocationByCepService>()
+    @BeforeEach
+    fun setup() {
+        locationRepository.deleteAll()
     }
 
     @Test
     fun shouldReturn201AndLocationResponseWhenCepIsSuccessfullySaved() {
         val cep = "01001-000"
-        val locationDTO = LocationDTO(
-            idLocation = 1L,
+
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlEqualTo("/$cep/json/"))
+                .willReturn(
+                    WireMock.aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("""
+                            {
+                                "cep": "01001-000",
+                                "logradouro": "Praça da Sé",
+                                "complemento": "lado ímpar",
+                                "bairro": "Sé",
+                                "localidade": "São Paulo",
+                                "uf": "SP",
+                                "ibge": "3550308",
+                                "gia": "1004",
+                                "ddd": "11",
+                                "siafi": "7107"
+                            }
+                        """.trimIndent())
+                )
+        )
+
+        mockMvc.perform(
+            post("/locations/{cep}", cep)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isCreated)
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(objectMapper.writeValueAsString(
+                locationRepository.findAll().first().toDTO().toLocationResponse()
+            )))
+    }
+
+    @Test
+    fun shouldReturn409WhenCepAlreadyExists() {
+        val cep = "01001-000"
+        locationRepository.save(createLocation(cep))
+
+        mockMvc.perform(
+            post("/locations/{cep}", cep)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isConflict)
+    }
+
+    @Test
+    fun shouldReturn400WhenCepFormatIsInvalid() {
+        val invalidCep = "cep-invalido"
+
+        mockMvc.perform(
+            post("/locations/{cep}", invalidCep)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun shouldReturn404WhenCepIsNotFound() {
+        val cepNotFound = "99999-999"
+
+        WireMock.stubFor(
+            WireMock.get(WireMock.urlEqualTo("/$cepNotFound/json/"))
+                .willReturn(
+                    WireMock.aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("""{"erro": true}""")
+                )
+        )
+
+        mockMvc.perform(
+            post("/locations/{cep}", cepNotFound)
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isNotFound)
+    }
+
+    private fun createLocation(cep: String): LocationEntity {
+        return LocationEntity(
+            idLocation = null,
             cep = cep,
             logradouro = "Praça da Sé",
             complemento = "lado ímpar",
@@ -52,55 +131,24 @@ class SaveLocationByApiCepControllerTest @Autowired constructor(
             ddd = "11",
             siafi = "7107"
         )
-        val locationResponse = locationDTO.toLocationResponse()
-
-        every { saveLocationByCepService.saveLocationByCep(cep) } returns locationDTO
-
-        mockMvc.perform(
-            post("/locations/{cep}", cep)
-                .contentType(MediaType.APPLICATION_JSON)
-        )
-            .andExpect(status().isCreated)
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().json(objectMapper.writeValueAsString(locationResponse)))
     }
 
-    @Test
-    fun shouldReturn409WhenCepAlreadyExists() {
-        val cep = "01001-000"
-
-        every { saveLocationByCepService.saveLocationByCep(cep) } throws CepAlreadyExistsException(cep)
-
-        mockMvc.perform(
-            post("/locations/{cep}", cep)
-                .contentType(MediaType.APPLICATION_JSON)
+    private fun LocationEntity.toDTO(): LocationDTO {
+        return LocationDTO(
+            idLocation = this.idLocation,
+            cep = this.cep,
+            logradouro = this.logradouro,
+            complemento = this.complemento,
+            unidade = this.unidade,
+            bairro = this.bairro,
+            localidade = this.localidade,
+            uf = this.uf,
+            estado = this.estado,
+            regiao = this.regiao,
+            ibge = this.ibge,
+            gia = this.gia,
+            ddd = this.ddd,
+            siafi = this.siafi
         )
-            .andExpect(status().isConflict)
-    }
-
-    @Test
-    fun shouldReturn400WhenCepFormatIsInvalid() {
-        val cep = "cep-invalido"
-
-        every { saveLocationByCepService.saveLocationByCep(cep) } throws InvalidCepFormatException(cep)
-
-        mockMvc.perform(
-            post("/locations/{cep}", cep)
-                .contentType(MediaType.APPLICATION_JSON)
-        )
-            .andExpect(status().isBadRequest)
-    }
-
-    @Test
-    fun shouldReturn404WhenCepIsNotFound() {
-        val cep = "99999-999"
-
-        every { saveLocationByCepService.saveLocationByCep(cep) } throws CepNotFoundException(cep)
-
-        mockMvc.perform(
-            post("/locations/{cep}", cep)
-                .contentType(MediaType.APPLICATION_JSON)
-        )
-            .andExpect(status().isNotFound)
     }
 }

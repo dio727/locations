@@ -13,13 +13,13 @@ data class LocationEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val idLocation: Long? = null,
 
-    val cep: String,
+    val cep: String?,
     var logradouro: String?,
     var complemento: String?,
     var unidade: String?,
     var bairro: String?,
-    var localidade: String,
-    val uf: String,
+    var localidade: String?,
+    val uf: String?,
     val estado: String?,
     val regiao: String?,
     var ibge: String?,

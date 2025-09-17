@@ -45,7 +45,8 @@ class FetchLocationServiceTest {
             ibge = "3550308",
             gia = "1004",
             ddd = "11",
-            siafi = "7107"
+            siafi = "7107",
+            erro = null
         )
 
         every { getLocationClient.getLocationByCep(cep) } returns clientResponse
@@ -73,9 +74,12 @@ class FetchLocationServiceTest {
     @Test
     fun shouldThrowCepNotFoundExceptionWhenClientReturns404NotFound() {
         val cep = "99999-999"
-        val request = Request.create(Request.HttpMethod.GET, "/api", emptyMap(), null, Charset.defaultCharset(), null)
 
-        every { getLocationClient.getLocationByCep(cep) } throws FeignException.NotFound("Not Found", request, null, emptyMap())
+        every { getLocationClient.getLocationByCep(cep) } returns ApiCepLocationResponse(
+            cep = "", logradouro = null, complemento = null, bairro = null,
+            localidade = null, uf = null, ibge = null, gia = null, ddd = null,
+            siafi = null, regiao = null, estado = null, unidade = null, erro = true
+        )
 
         assertThrows<CepNotFoundException> {
             fetchLocationService.fetchByCep(cep)

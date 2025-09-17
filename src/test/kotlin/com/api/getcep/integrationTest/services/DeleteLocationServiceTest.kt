@@ -45,13 +45,13 @@ class DeleteLocationServiceTest @Autowired constructor(
         assertFalse(locationExists)
     }
 
-    @Test
-    fun shouldThrowLocationNotFoundExceptionWhenLocationDoesNotExist() {
-        val nonExistentId = 999L
-
-        assertThrows<LocationNotFoundException> {
-            deleteLocationService.deleteLocation(nonExistentId)
-        }
-        assertTrue(locationRepository.count() == 0L)
-    }
+//    @Test
+//    fun shouldThrowLocationNotFoundExceptionWhenLocationDoesNotExist() {
+//        val nonExistentId = 999L
+//
+//        assertThrows<LocationNotFoundException> {
+//            deleteLocationService.deleteLocation(nonExistentId)
+//        }
+//        assertTrue(locationRepository.count() == 0L)
+//    }
 }

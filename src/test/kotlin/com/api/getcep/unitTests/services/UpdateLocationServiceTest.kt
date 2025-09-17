@@ -5,7 +5,6 @@ import com.api.getcep.domain.location.repositories.LocationRepository
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.dtos.UpdateLocationDTO
 import com.api.getcep.exceptions.LocationNotFoundException
-import com.api.getcep.mappers.toLocationDTO
 import com.api.getcep.services.GetLocationByIdService
 import com.api.getcep.services.UpdateLocationService
 import kotlin.test.Test
@@ -13,7 +12,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.assertThrows
-import java.util.Optional
 import kotlin.test.assertEquals
 
 class UpdateLocationServiceTest {
