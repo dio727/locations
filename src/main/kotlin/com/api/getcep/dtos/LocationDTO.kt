@@ -10,7 +10,7 @@ data class LocationDTO(
     var localidade: String?,
     val uf: String?,
     val estado: String?,
-    val regiao: String?,
+    var regiao: String?,
     var ibge: String?,
     var gia: String?,
     val ddd: String?,

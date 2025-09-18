@@ -11,20 +11,31 @@ import com.api.getcep.services.SaveLocationByCepService
 import io.mockk.Runs
 import kotlin.test.Test
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.junit5.MockKExtension
 import io.mockk.just
-import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 
-class SaveLocationByCepServiceTest {
-    private val locationRepository: LocationRepository = mockk()
-    private val fetchLocationService: FetchLocationService = mockk()
-    private val getLocationByCepService: GetLocationByCepService = mockk()
-    private val saveLocationByCepService = SaveLocationByCepService(
-        locationRepository, fetchLocationService, getLocationByCepService
-    )
+@ExtendWith(MockKExtension::class)
+class SaveLocationByCepServiceTest(
+    @param:MockK
+    private val locationRepository: LocationRepository,
 
+    @param:MockK
+    private val fetchLocationService: FetchLocationService,
+
+    @param:MockK
+    private val getLocationByCepService: GetLocationByCepService,
+
+    @param:InjectMockKs
+    private val saveLocationByCepService: SaveLocationByCepService
+
+)// extends
+{
     @Test
     fun shouldSaveLocationWhenCepDoesNotExist() {
         val cep = "01001-000"

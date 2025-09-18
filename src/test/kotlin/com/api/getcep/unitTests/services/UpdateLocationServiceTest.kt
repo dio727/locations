@@ -67,7 +67,8 @@ class UpdateLocationServiceTest {
             localidade = updateDTO.localidade,
             ibge = updateDTO.ibge,
             gia = updateDTO.gia,
-            siafi = updateDTO.siafi
+            siafi = updateDTO.siafi,
+            regiao = updateDTO.regiao
         )
 
         verify(exactly = 1) { locationRepository.save(any()) }

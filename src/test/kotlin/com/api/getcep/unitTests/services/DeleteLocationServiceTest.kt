@@ -1,25 +1,30 @@
 package com.api.getcep.unitTests.services
 
-import com.api.getcep.domain.location.repositories.LocationRepository
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.exceptions.LocationNotFoundException
 import com.api.getcep.mappers.toLocationEntity
 import com.api.getcep.services.DeleteLocationService
-import com.api.getcep.services.GetLocationByIdService
+import com.api.getcep.unitTests.services.mock.BaseServiceTest
+import io.mockk.MockKAnnotations
 import kotlin.test.Test
 import io.mockk.every
 import io.mockk.justRun
-import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
 
-class DeleteLocationServiceTest {
-    private val locationRepository: LocationRepository = mockk()
-    private val getLocationByIdService: GetLocationByIdService = mockk()
-    private val deleteLocationService = DeleteLocationService(
-        locationRepository,
-        getLocationByIdService
-    )
+class DeleteLocationServiceTest : BaseServiceTest() {
+
+    private lateinit var deleteLocationService: DeleteLocationService
+
+    @BeforeEach
+    fun setup() {
+        MockKAnnotations.init(this)
+        deleteLocationService = DeleteLocationService(
+            locationRepository,
+            getLocationByIdService
+        )
+    }
 
     @Test
     fun shouldDeleteLocationWhenFound() {

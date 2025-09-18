@@ -92,5 +92,18 @@ fun UpdateLocationRequest.toUpdateLocationDTO(): UpdateLocationDTO =
         regiao = this.regiao
     )
 
+fun LocationEntity.toUpdateLocationEntity(updateDTO: UpdateLocationDTO): LocationEntity = this.apply {
+    logradouro = updateDTO.logradouro
+    complemento = updateDTO.complemento
+    unidade = updateDTO.unidade
+    bairro = updateDTO.bairro
+    localidade = updateDTO.localidade
+    ibge = updateDTO.ibge
+    gia = updateDTO.gia
+    siafi = updateDTO.siafi
+    regiao = updateDTO.regiao
+}
+
+
 
 
