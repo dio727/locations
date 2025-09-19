@@ -2,7 +2,7 @@ package com.api.getcep.unitTests.services
 
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.exceptions.LocationNotFoundException
-import com.api.getcep.integrations.rabbitmq.Producer
+import com.api.getcep.integrations.rabbitmq.LocationProducer
 import com.api.getcep.mappers.toLocationEntity
 import com.api.getcep.services.DeleteLocationService
 import com.api.getcep.unitTests.services.mock.BaseServiceTest
@@ -22,7 +22,7 @@ class DeleteLocationServiceTest : BaseServiceTest() {
     private lateinit var deleteLocationService: DeleteLocationService
 
     @MockK
-    private lateinit var producer: Producer
+    private lateinit var producer: LocationProducer
 
 
     @BeforeEach
@@ -56,7 +56,7 @@ class DeleteLocationServiceTest : BaseServiceTest() {
 
         every { getLocationByIdService.getLocationById(1L) } returns locationDTO
         justRun { locationRepository.delete(any()) }
-        every { producer.send(any(), any<Producer.Operation>()) } just Runs
+        every { producer.send(any(), any<LocationProducer.Operation>()) } just Runs
 
         deleteLocationService.deleteLocation(1L)
 

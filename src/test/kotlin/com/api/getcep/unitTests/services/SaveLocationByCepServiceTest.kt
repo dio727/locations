@@ -3,7 +3,7 @@ package com.api.getcep.unitTests.services
 import com.api.getcep.domain.location.repositories.LocationRepository
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.exceptions.CepAlreadyExistsException
-import com.api.getcep.integrations.rabbitmq.Producer
+import com.api.getcep.integrations.rabbitmq.LocationProducer
 import com.api.getcep.mappers.toLocationDTO
 import com.api.getcep.mappers.toLocationEntity
 import com.api.getcep.services.FetchLocationService
@@ -12,8 +12,6 @@ import com.api.getcep.services.SaveLocationByCepService
 import io.mockk.Runs
 import kotlin.test.Test
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
@@ -28,7 +26,7 @@ class SaveLocationByCepServiceTest {
     private val locationRepository: LocationRepository = mockk()
     private val fetchLocationService: FetchLocationService = mockk()
     private val getLocationByCepService: GetLocationByCepService = mockk()
-    private val producer: Producer = mockk()
+    private val producer: LocationProducer = mockk()
 
     private val saveLocationByCepService = SaveLocationByCepService(
         locationRepository,
@@ -63,7 +61,7 @@ class SaveLocationByCepServiceTest {
         every { getLocationByCepService.checkCepExists(cep) } just Runs
         every { fetchLocationService.fetchByCep(cep) } returns fetchedLocationDTO
         every { locationRepository.save(any()) } returns savedLocationEntity
-        every { producer.send(any(), any<Producer.Operation>()) } just Runs
+        every { producer.send(any(), any<LocationProducer.Operation>()) } just Runs
 
         val result = saveLocationByCepService.saveLocationByCep(cep)
         val expectedDTO = savedLocationEntity.toLocationDTO()

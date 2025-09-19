@@ -5,7 +5,7 @@ import com.api.getcep.domain.location.repositories.LocationRepository
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.dtos.UpdateLocationDTO
 import com.api.getcep.exceptions.LocationNotFoundException
-import com.api.getcep.integrations.rabbitmq.Producer
+import com.api.getcep.integrations.rabbitmq.LocationProducer
 import com.api.getcep.services.GetLocationByIdService
 import com.api.getcep.services.UpdateLocationService
 import io.mockk.Runs
@@ -15,14 +15,13 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.assertThrows
-import org.springframework.cloud.stream.binder.rabbit.properties.RabbitProducerProperties
 import kotlin.test.assertEquals
 
 class UpdateLocationServiceTest {
 
     private val locationRepository: LocationRepository = mockk()
     private val getLocationByIdService: GetLocationByIdService = mockk()
-    private val producer: Producer = mockk()
+    private val producer: LocationProducer = mockk()
 
     private val updateLocationService = UpdateLocationService(
         locationRepository,
@@ -63,7 +62,7 @@ class UpdateLocationServiceTest {
 
         every { getLocationByIdService.getLocationById(idLocation) } returns locationDTO
         every { locationRepository.save(any()) } answers { firstArg<LocationEntity>() }
-        every { producer.send(any(), any<Producer.Operation>()) } just Runs
+        every { producer.send(any(), any<LocationProducer.Operation>()) } just Runs
 
         val result = updateLocationService.updateLocation(idLocation, updateDTO)
 
