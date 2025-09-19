@@ -21,7 +21,7 @@ class SaveLocationByCepService(
         val apiCepLocationEntity = fetchLocationService.fetchByCep(cep).toLocationEntity()
         val savedEntity = locationRepository.save(apiCepLocationEntity)
 
-        producer.send("Location salva com ID: ${savedEntity.idLocation}")
+        producer.send("Location salva com ID: ${savedEntity.idLocation}", Producer.Operation.SAVE)
 
         return savedEntity.toLocationDTO()
     }

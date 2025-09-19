@@ -21,7 +21,7 @@ class UpdateLocationService(
         val locationEntity = locationDto.toLocationEntity().toUpdateLocationEntity(updateDTO)
         val updated = locationRepository.save(locationEntity)
 
-        producer.send("Location atualizada com ID: ${updated.idLocation}")
+        producer.send("Location atualizada com ID: ${updated.idLocation}", Producer.Operation.UPDATE)
 
         return updated.toLocationDTO()
     }

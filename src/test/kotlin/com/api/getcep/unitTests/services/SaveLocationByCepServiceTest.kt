@@ -63,7 +63,7 @@ class SaveLocationByCepServiceTest {
         every { getLocationByCepService.checkCepExists(cep) } just Runs
         every { fetchLocationService.fetchByCep(cep) } returns fetchedLocationDTO
         every { locationRepository.save(any()) } returns savedLocationEntity
-        every { producer.send(any()) } just Runs
+        every { producer.send(any(), any<Producer.Operation>()) } just Runs
 
         val result = saveLocationByCepService.saveLocationByCep(cep)
         val expectedDTO = savedLocationEntity.toLocationDTO()

@@ -2,12 +2,16 @@ package com.api.getcep.unitTests.services
 
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.exceptions.LocationNotFoundException
+import com.api.getcep.integrations.rabbitmq.Producer
 import com.api.getcep.mappers.toLocationEntity
 import com.api.getcep.services.DeleteLocationService
 import com.api.getcep.unitTests.services.mock.BaseServiceTest
 import io.mockk.MockKAnnotations
+import io.mockk.Runs
 import kotlin.test.Test
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.just
 import io.mockk.justRun
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -17,12 +21,17 @@ class DeleteLocationServiceTest : BaseServiceTest() {
 
     private lateinit var deleteLocationService: DeleteLocationService
 
+    @MockK
+    private lateinit var producer: Producer
+
+
     @BeforeEach
     fun setup() {
         MockKAnnotations.init(this)
         deleteLocationService = DeleteLocationService(
             locationRepository,
-            getLocationByIdService
+            getLocationByIdService,
+            producer
         )
     }
 
@@ -47,6 +56,7 @@ class DeleteLocationServiceTest : BaseServiceTest() {
 
         every { getLocationByIdService.getLocationById(1L) } returns locationDTO
         justRun { locationRepository.delete(any()) }
+        every { producer.send(any(), any<Producer.Operation>()) } just Runs
 
         deleteLocationService.deleteLocation(1L)
 

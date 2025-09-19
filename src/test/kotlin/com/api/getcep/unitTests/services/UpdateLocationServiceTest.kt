@@ -63,7 +63,7 @@ class UpdateLocationServiceTest {
 
         every { getLocationByIdService.getLocationById(idLocation) } returns locationDTO
         every { locationRepository.save(any()) } answers { firstArg<LocationEntity>() }
-        every { producer.send(any()) } just Runs
+        every { producer.send(any(), any<Producer.Operation>()) } just Runs
 
         val result = updateLocationService.updateLocation(idLocation, updateDTO)
 
