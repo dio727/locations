@@ -18,5 +18,11 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+
 viacep:
   url: ${VIACEP_URL:https://viacep.com.br/ws}

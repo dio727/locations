@@ -3,6 +3,7 @@ package com.api.getcep.unitTests.services
 import com.api.getcep.domain.location.repositories.LocationRepository
 import com.api.getcep.dtos.LocationDTO
 import com.api.getcep.exceptions.CepAlreadyExistsException
+import com.api.getcep.integrations.rabbitmq.Producer
 import com.api.getcep.mappers.toLocationDTO
 import com.api.getcep.mappers.toLocationEntity
 import com.api.getcep.services.FetchLocationService
@@ -15,27 +16,26 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
+import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Assert.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 
 @ExtendWith(MockKExtension::class)
-class SaveLocationByCepServiceTest(
-    @param:MockK
-    private val locationRepository: LocationRepository,
+class SaveLocationByCepServiceTest {
 
-    @param:MockK
-    private val fetchLocationService: FetchLocationService,
+    private val locationRepository: LocationRepository = mockk()
+    private val fetchLocationService: FetchLocationService = mockk()
+    private val getLocationByCepService: GetLocationByCepService = mockk()
+    private val producer: Producer = mockk()
 
-    @param:MockK
-    private val getLocationByCepService: GetLocationByCepService,
-
-    @param:InjectMockKs
-    private val saveLocationByCepService: SaveLocationByCepService
-
-)// extends
-{
+    private val saveLocationByCepService = SaveLocationByCepService(
+        locationRepository,
+        fetchLocationService,
+        getLocationByCepService,
+        producer
+    )
     @Test
     fun shouldSaveLocationWhenCepDoesNotExist() {
         val cep = "01001-000"
@@ -63,6 +63,7 @@ class SaveLocationByCepServiceTest(
         every { getLocationByCepService.checkCepExists(cep) } just Runs
         every { fetchLocationService.fetchByCep(cep) } returns fetchedLocationDTO
         every { locationRepository.save(any()) } returns savedLocationEntity
+        every { producer.send(any()) } just Runs
 
         val result = saveLocationByCepService.saveLocationByCep(cep)
         val expectedDTO = savedLocationEntity.toLocationDTO()
